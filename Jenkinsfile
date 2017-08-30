@@ -21,7 +21,7 @@ podTemplate(label: 'recikligi-build-pod', nodeSelector: 'medium', containers: [
             sh 'mkdir /etc/docker'
             sh 'echo {"insecure-registries" : ["registry.wildwidewest.xyz"]} > /etc/docker/daemon.json'
             sh 'docker login -u admin -p softeam44 registry.wildwidewest.xyz'
-            sh 'docker build . -t registry.wildwidewest.xyz/repository/docker-repository/pocs/recikligi'
+            sh 'docker build -f src/main/docker/Dockerfile -t registry.wildwidewest.xyz/repository/docker-repository/pocs/recikligi .'
             sh 'docker push registry.wildwidewest.xyz/repository/docker-repository/pocs/recikligi'
         }
 
