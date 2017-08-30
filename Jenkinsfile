@@ -2,7 +2,6 @@
 import java.text.SimpleDateFormat
 
 podTemplate(label: 'recikligi-build-pod', nodeSelector: 'medium', containers: [
-
         containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:alpine'),
         containerTemplate(name: 'maven', image: 'maven:3.5.0', ttyEnabled: true, command: 'cat'),
         containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true),
@@ -12,29 +11,21 @@ podTemplate(label: 'recikligi-build-pod', nodeSelector: 'medium', containers: [
 ) {
 
     node('recikligi-build-pod') {
-
-        git url: 'https://github.com/yvzn/recikligi.git'
+        git url: 'https://github.com/yvzn/recikligi.git', branch: 'softeam'
 
         container('maven') {
-
             sh 'mvn clean install'
         }
 
         container('docker') {
-
             sh 'mkdir /etc/docker'
-
             sh 'echo {"insecure-registries" : ["registry.wildwidewest.xyz"]} > /etc/docker/daemon.json'
-
             sh 'docker login -u admin -p softeam44 registry.wildwidewest.xyz'
-
             sh 'docker build . -t registry.wildwidewest.xyz/repository/docker-repository/pocs/recikligi'
-
             sh 'docker push registry.wildwidewest.xyz/repository/docker-repository/pocs/recikligi'
         }
 
         container('kubectl') {
-
             sh 'kubectl --namespace=development --server=http://92.222.81.117:8080 apply -f src/main/kubernetes/recikligi.yml'
         }
     }
