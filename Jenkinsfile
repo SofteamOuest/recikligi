@@ -28,7 +28,7 @@ podTemplate(label: 'recikligi-build-pod', nodeSelector: 'medium', containers: [
         }
 
         container('kubectl') {
-            sh "sed -i 's/@dockerTagname@/${dockerTagname}/' src/main/kubernetes/recikligi.yml"
+            sh "sed -i 's,@dockerTagname@,${dockerTagname},' src/main/kubernetes/recikligi.yml"
             sh 'kubectl --namespace=development --server=http://92.222.81.117:8080 apply -f src/main/kubernetes/recikligi.yml'
         }
     }
