@@ -23,8 +23,8 @@ podTemplate(label: 'recikligi-build-pod', nodeSelector: 'medium', containers: [
             sh 'mkdir /etc/docker'
             sh 'echo {"insecure-registries" : ["registry.wildwidewest.xyz"]} > /etc/docker/daemon.json'
             sh 'docker login -u admin -p softeam44 registry.wildwidewest.xyz'
-            sh 'docker build -f src/main/docker/Dockerfile -t ${dockerTagname} .'
-            sh 'docker push ${dockerTagname}'
+            sh "docker build -f src/main/docker/Dockerfile -t ${dockerTagname} ."
+            sh "docker push ${dockerTagname}"
         }
 
         container('kubectl') {
