@@ -11,6 +11,8 @@ podTemplate(label: 'recikligi-build-pod', nodeSelector: 'medium', containers: [
 ) {
 
     node('recikligi-build-pod') {
+        def dockerTagname = "registry.wildwidewest.xyz/repository/docker-repository/pocs/recikligi-${env.BUILD_ID}"
+
         git url: 'https://github.com/yvzn/recikligi.git', branch: 'softeam'
 
         container('maven') {
@@ -21,11 +23,12 @@ podTemplate(label: 'recikligi-build-pod', nodeSelector: 'medium', containers: [
             sh 'mkdir /etc/docker'
             sh 'echo {"insecure-registries" : ["registry.wildwidewest.xyz"]} > /etc/docker/daemon.json'
             sh 'docker login -u admin -p softeam44 registry.wildwidewest.xyz'
-            sh 'docker build -f src/main/docker/Dockerfile -t registry.wildwidewest.xyz/repository/docker-repository/pocs/recikligi .'
-            sh 'docker push registry.wildwidewest.xyz/repository/docker-repository/pocs/recikligi'
+            sh 'docker build -f src/main/docker/Dockerfile -t ${dockerTagname} .'
+            sh 'docker push ${dockerTagname}'
         }
 
         container('kubectl') {
+            sh "sed -i 's/@dockerTagname@/${dockerTagname}/' src/main/kubernetes/recikligi.yml"
             sh 'kubectl --namespace=development --server=http://92.222.81.117:8080 apply -f src/main/kubernetes/recikligi.yml'
         }
     }

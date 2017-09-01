@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: recikligi
-        image: registry.wildwidewest.xyz/repository/docker-repository/pocs/recikligi
+        image: @dockerTagname@
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
