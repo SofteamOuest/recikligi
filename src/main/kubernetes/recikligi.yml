@@ -15,6 +15,12 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
+        env:
+          - name: RECIKLIGI_WATSON_APIKEY
+            valueFrom:
+              secretKeyRef:
+                name: recikligisecret
+                key: apikey
       imagePullSecrets:
       - name: regsecret
 ---
