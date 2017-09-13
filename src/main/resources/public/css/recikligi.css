@@ -43,6 +43,7 @@ html
 
 body
 {
+    position: relative;
     display: flex;
     flex-direction: column;
     max-width: 450px;
@@ -134,7 +135,6 @@ label[for]
     height: 2.5em;
     margin: auto;
     cursor: pointer;
-    text-align: center;
     color: var(--primary-color-text);
     border-radius: 50%;
     background-color: var(--primary-color);
@@ -202,6 +202,14 @@ label[for=camera]
     .recyclableStatus.recyclable
     {
         color: var(--recyclable-status-color);
+    }
+
+    .recyclableStatus.glass,
+    .recyclableStatus.waste-collection-center,
+    .recyclableStatus.compost-pile,
+    .recyclableStatus.container,
+    {
+        color: var(--primary-color); /* update this */
     }
 
 .disclaimer {
