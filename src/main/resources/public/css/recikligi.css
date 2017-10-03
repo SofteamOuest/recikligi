@@ -78,11 +78,9 @@ h1
 h2
 {
     margin-top: 0;
-    animation: appear-1st 1s ease-out;
-    animation-fill-mode: forwards;
 }
 
-section
+main
 {
     padding: var(--space-2x) var(--space-4x) 0 var(--space-4x);
     overflow: hidden;
@@ -188,8 +186,8 @@ label[for=camera]
     /* --image-url variable is defined in HTML */
     color: var(--main-color);
     background-image: linear-gradient(var(--image-tinting), var(--image-tinting)), var(--image-url);
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-repeat: repeat-y;
+    background-position: center 200%;
     background-size: cover;
 }
 
@@ -198,43 +196,11 @@ label[for=camera]
         color: var(--main-color);
     }
 
-    .results > section,
+    .results > main,
     .results > form
     {
         color: var(--main-color-text);
         background-color: var(--main-color);
-    }
-
-    .results .visualClass
-    {
-        animation: appear-1st 1s ease-out;
-        animation-fill-mode: forwards;
-    }
-
-    .results .recyclableStatus
-    {
-        animation: appear-2nd 2s ease-out;
-        animation-fill-mode: forwards;        
-    }
-
-    .results .disclaimer
-    {
-        animation: appear-3rd 3s ease-out;
-        animation-fill-mode: forwards;        
-    }
-
-    @keyframes appear-1st {
-        0% { transform: translateY(var(--space-2x)); opacity: 0; }
-    }
-
-    @keyframes appear-2nd {
-        0% { opacity: 0; }
-        50% { transform: translateY(var(--space-2x)); opacity: 0}
-    }
-
-    @keyframes appear-3rd {
-        0% { opacity: 0; }
-        66% { transform: translateY(var(--space-2x)); opacity: 0; }
     }
 
 .visualClass em
@@ -279,8 +245,7 @@ label[for=camera]
 
 .disclaimer {
     color: var(--disclaimer-color);
-    animation: appear-2nd 2s ease-out;
-    animation-fill-mode: forwards;
+    font-size: 90%;
 }
 
     .disclaimer * {
@@ -314,7 +279,7 @@ label[for=camera]
         background-color: transparent;
     }
 
-    body > section,
+    body > main,
     body > form
     {
         color: var(--main-color-text);
