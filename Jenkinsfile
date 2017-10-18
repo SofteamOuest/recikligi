@@ -13,23 +13,39 @@ podTemplate(label: 'recikligi-build-pod', nodeSelector: 'medium', containers: [
     node('recikligi-build-pod') {
         def dockerTagname = "registry.wildwidewest.xyz/repository/docker-repository/pocs/recikligi-${env.BUILD_ID}"
 
-        git url: 'https://github.com/yvzn/recikligi.git', branch: 'softeam'
+        stage('checkout sources'){
+            git url: 'https://github.com/yvzn/recikligi.git', branch: 'softeam'
+        }
 
         container('maven') {
-            sh 'mvn clean install'
+            stage('build sources'){
+                sh 'mvn clean install'
+            }
         }
 
         container('docker') {
-            sh 'mkdir /etc/docker'
-            sh 'echo {"insecure-registries" : ["registry.wildwidewest.xyz"]} > /etc/docker/daemon.json'
-            sh 'docker login -u admin -p softeam44 registry.wildwidewest.xyz'
-            sh "docker build -t ${dockerTagname} ."
-            sh "docker push ${dockerTagname}"
+            stage('build docker image'){
+                sh "docker build -t ${dockerTagname} ."
+
+                sh 'mkdir /etc/docker'
+                sh 'echo {"insecure-registries" : ["registry.wildwidewest.xyz"]} > /etc/docker/daemon.json'
+
+                withCredentials([string(credentialsId: 'nexus_password', variable: 'NEXUS_PWD')]) {
+                     sh "docker login -u admin -p ${NEXUS_PWD} registry.wildwidewest.xyz"
+                }
+                
+                sh "docker push ${dockerTagname}"
+            }
         }
 
         container('kubectl') {
-            sh "sed -i 's,@dockerTagname@,${dockerTagname},' src/main/kubernetes/recikligi.yml"
-            sh 'kubectl --namespace=development --server=http://92.222.81.117:8080 apply -f src/main/kubernetes/recikligi.yml'
+            stage('deploy'){
+                sh "sed -i 's,@dockerTagname@,${dockerTagname},' src/main/kubernetes/recikligi.yml"
+                sh 'kubectl delete ing meltingpoc'
+                sh 'kubectl delete svc meltingpoc'
+                sh 'kubectl delete deployment meltingpoc'
+                sh 'kubectl apply -f src/main/kubernetes/recikligi.yml'
+            }
         }
     }
 }

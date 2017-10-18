@@ -45,7 +45,7 @@ metadata:
     traefik.frontend.rule.type: PathPrefixStrip
 spec:
   rules:
-  - host: recikligi.k8.wildwidewest.xyz
+  - host: recyclette.k8.wildwidewest.xyz
     http:
       paths:
       - backend:
