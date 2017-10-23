@@ -41,9 +41,9 @@ podTemplate(label: 'recikligi-build-pod', nodeSelector: 'medium', containers: [
         container('kubectl') {
             stage('deploy'){
                 sh "sed -i 's,@dockerTagname@,${dockerTagname},' src/main/kubernetes/recikligi.yml"
-                sh 'kubectl delete ing recikligi || true'
-                sh 'kubectl delete svc recikligi || true'
-                sh 'kubectl delete deployment recikligi || true'
+                sh 'kubectl delete ing recikligi || :'
+                sh 'kubectl delete svc recikligi || :'
+                sh 'kubectl delete deployment recikligi || :'
                 sh 'kubectl apply -f src/main/kubernetes/recikligi.yml'
             }
         }
