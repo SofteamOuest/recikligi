@@ -4,6 +4,7 @@ Content:
     form + buttons
     results page
     alternate pages
+    feedback pages
     responsive + media queries
 */
 
@@ -22,16 +23,22 @@ Content:
     --accent-1-color: #06d6a0;
     --accent-2-color: #ff5e5b;
 
+    --disabled-color: #999;
+    --camera-background-color: #000;
+    --disclaimer-color: #B4B4B1;
+    --secondary-action-color: var(--accent-2-color);
+
     --image-tinting: hsla(0, 0%, 0%, .3);
 
     --recyclable-status-color: var(--accent-1-color);
     --not-recyclable-status-color: var(--accent-2-color);
     --other-recyclable-status-color: var(--primary-color);
-    --disclaimer-color: #B4B4B1;
 
     --space-4x: 4rem;
     --space-2x: 2rem;
     --space-1x: 1rem;
+
+    --main-content-height: calc(100% - 8rem);
 }
 
 *
@@ -66,6 +73,7 @@ h1
     padding: var(--space-2x) 0 var(--space-2x) 0;
     text-align: center;
     color: var(--accent-1-color);
+    font-size: 2rem;
 }
 
     h1 a
@@ -77,11 +85,9 @@ h1
 h2
 {
     margin-top: 0;
-    animation: appear-1st 1s ease-out;
-    animation-fill-mode: forwards;
 }
 
-section
+main
 {
     padding: var(--space-2x) var(--space-4x) 0 var(--space-4x);
     overflow: hidden;
@@ -103,11 +109,12 @@ nav
     text-align: right;
     order: -1;
     height: var(--space-2x);
+    z-index: 2;
 }
 
     nav a
     {
-        font-size: 1.5em;
+        font-size: 1.5rem;
         display: inline-block;
         padding: var(--space-1x) var(--space-1x) 0 0;
         text-decoration: none;
@@ -131,7 +138,12 @@ pre
 
 form
 {
+    position: relative;
     padding-bottom: var(--space-4x);
+    display: grid;
+    grid-template-columns: 1fr 5rem 1fr;
+    align-items: center;
+    justify-items: center;
 }
 
 input[type='file']
@@ -151,16 +163,16 @@ input[type='submit']
     margin-right: auto;
 }
 
-label[for]
+label[data-action-button]
 {
+    grid-column: 2;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 30px;
     font-weight: bold;
-    width: 2.5em;
-    height: 2.5em;
-    margin: auto;
+    width: 5rem;
+    height: 5rem;
     cursor: pointer;
     color: var(--primary-color-text);
     border-radius: 50%;
@@ -168,16 +180,24 @@ label[for]
     box-shadow: 0 0 .2em silver;
 }
 
-label[for=camera]
-{
-    animation: pulse 1.25s cubic-bezier(0.66, 0, 0, 1) 10s infinite
-}
+    label[data-action-button][data-secondary-action]
+    {
+        font-size: 20px;
+        width: 3rem;
+        height: 3rem;
+        background-color: var(--secondary-action-color);
+    }
 
-@keyframes pulse
-{
-    from { box-shadow: 0 0 0 0 var(--primary-color); }
-    to { box-shadow: 0 0 0 45px var(--primary-color-transparent); }
-}
+    label[data-action-button][data-secondary-action='left']
+    {
+        grid-column: 1;
+    }
+
+    label[data-action-button][data-secondary-action='right']
+    {
+        grid-column: 3;
+    }
+
 
 /* == results page ================================================================================================= */
 
@@ -186,8 +206,8 @@ label[for=camera]
     /* --image-url variable is defined in HTML */
     color: var(--main-color);
     background-image: linear-gradient(var(--image-tinting), var(--image-tinting)), var(--image-url);
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-repeat: repeat-y;
+    background-position: center 200%;
     background-size: cover;
 }
 
@@ -196,43 +216,11 @@ label[for=camera]
         color: var(--main-color);
     }
 
-    .results > section,
+    .results > main,
     .results > form
     {
         color: var(--main-color-text);
         background-color: var(--main-color);
-    }
-
-    .results .visualClass
-    {
-        animation: appear-1st 1s ease-out;
-        animation-fill-mode: forwards;
-    }
-
-    .results .recyclableStatus
-    {
-        animation: appear-2nd 2s ease-out;
-        animation-fill-mode: forwards;        
-    }
-
-    .results .disclaimer
-    {
-        animation: appear-3rd 3s ease-out;
-        animation-fill-mode: forwards;        
-    }
-
-    @keyframes appear-1st {
-        0% { transform: translateY(var(--space-2x)); opacity: 0; }
-    }
-
-    @keyframes appear-2nd {
-        0% { opacity: 0; }
-        50% { transform: translateY(var(--space-2x)); opacity: 0}
-    }
-
-    @keyframes appear-3rd {
-        0% { opacity: 0; }
-        66% { transform: translateY(var(--space-2x)); opacity: 0; }
     }
 
 .visualClass em
@@ -263,7 +251,11 @@ label[for=camera]
         font-size: 1.5em;
         font-weight: normal;
         margin: 0;
-        text-transform: capitalize;
+    }
+
+    .recyclableStatus h3:first-letter
+    {
+        text-transform: uppercase;
     }
 
     .results .recyclableStatus p
@@ -273,8 +265,7 @@ label[for=camera]
 
 .disclaimer {
     color: var(--disclaimer-color);
-    animation: appear-2nd 2s ease-out;
-    animation-fill-mode: forwards;
+    font-size: 90%;
 }
 
     .disclaimer * {
@@ -283,9 +274,23 @@ label[for=camera]
 
 /* == alternate pages ============================================================================================== */
 
-.accent-2 label[for]
+.accent-2 label[data-action-button]
 {
     background-color: var(--accent-2-color);
+}
+
+/* == feedback pages =============================================================================================== */
+
+#feedback {
+    display: block;
+}
+
+.feedback .conversational-form {
+    background-color: transparent;
+}
+
+.feedback cf-chat-response text>p {
+    background-color: white;
 }
 
 /* == responsive + media queries =================================================================================== */
@@ -295,6 +300,7 @@ label[for=camera]
         --space-4x: 3rem;
         --space-2x: 1.5rem;
         --space-1x: 1rem;
+        --main-content-height: calc(100% - 7rem + 2px);
     }
 
     html
@@ -308,7 +314,7 @@ label[for=camera]
         background-color: transparent;
     }
 
-    body > section,
+    body > main,
     body > form
     {
         color: var(--main-color-text);
@@ -321,5 +327,29 @@ label[for=camera]
         --space-4x: 2rem;
         --space-2x: 1rem;
         --space-1x: .5rem;
+        --main-content-height: calc(100% - 6rem + 10px);
+    }
+}
+
+@media screen and (max-height: 450px) {
+    h1 {
+        display: none;
+    }
+
+    nav {
+        display: none;
+    }
+
+    main {
+        padding: var(--space-1x) var(--space-1x) 0 var(--space-1x);
+    }
+
+    .conversational-form cf-chat {
+        margin-bottom: 10px;
+    }
+
+    .conversational-form cf-chat scrollable {
+        padding-bottom: 0;
+        padding-top: 20px;
     }
 }
