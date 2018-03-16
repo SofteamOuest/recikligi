@@ -2,51 +2,52 @@
 {
     position: absolute;
     left: 0;
+    bottom: 0;
     display: none;
     width: 100%;
-    height: calc(100% - 1em);
-    margin-top: .5em;
+    height: var(--main-content-height);
     background: var(--main-color);
     align-items: center;
     justify-content: center;
+    z-index: 3;
 }
 
-.loader .dot
-{
-    width: 10px;
-    height: 10px;
-    margin: 5px;
-    border-radius: 50%;
-    background: var(--primary-color);
-}
-
-.loader .dot1
-{
-    animation: dot-jump 1s ease infinite;
-}
-
-.loader .dot2
-{
-    animation: dot-jump 1s .1s ease infinite;
-}
-
-.loader .dot3
-{
-    animation: dot-jump 1s .2s ease infinite;
-}
-
-@keyframes dot-jump
-{
-    0%
+    .loader .dot
     {
-        transform: translateY(0);
+        width: 10px;
+        height: 10px;
+        margin: 5px;
+        border-radius: 50%;
+        background: var(--primary-color);
     }
-    25%
+
+    .loader .dot1
     {
-        transform: translateY(-15px);
+        animation: dot-jump 1s ease infinite;
     }
-    66%
+
+    .loader .dot2
     {
-        transform: translateY(0);
+        animation: dot-jump 1s .1s ease infinite;
     }
-}
+
+    .loader .dot3
+    {
+        animation: dot-jump 1s .2s ease infinite;
+    }
+
+    @keyframes dot-jump
+    {
+        0%
+        {
+            transform: translateY(0);
+        }
+        25%
+        {
+            transform: translateY(-15px);
+        }
+        66%
+        {
+            transform: translateY(0);
+        }
+    }

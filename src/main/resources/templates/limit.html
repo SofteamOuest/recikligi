@@ -3,11 +3,11 @@
 <head th:include="fragments/layout :: headerFragment"></head>
 <body class="accent-2">
 <h1 th:include="fragments/layout :: h1Fragment"></h1>
-<section>
+<main>
     <h2 th:text="#{limit.title}"></h2>
     <div th:utext="#{limit.text}"></div>
-</section>
-<form th:action="@{/}" th:include="fragments/layout :: homeButtonFragment"></form>
+</main>
+<form th:replace="fragments/layout :: homeButtonFragment"></form>
 <nav th:include="fragments/layout :: navFragment"></nav>
 </body>
 </html>

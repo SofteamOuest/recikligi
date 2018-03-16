@@ -9,8 +9,8 @@ spring:
       ddl-auto: validate
   servlet:
     multipart:
-      max-file-size: 2MB
-      max-request-size: 2MB
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 logging:
   level:
@@ -29,3 +29,9 @@ recikligi:
   daily:
     usage:
       limit: 100
+  image:
+    resize:
+      display:
+        width: 1024
+      recognition:
+        width-or-height: 2048

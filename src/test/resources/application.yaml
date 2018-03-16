@@ -1,0 +1,22 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+recikligi:
+  storageFolder: target/test-classes
+  watson:
+    apikey:
+  score:
+    threshold:
+      high: 80
+      medium: 60
+  daily:
+    usage:
+      limit: 100
+  image:
+    resize:
+      display:
+        width: 1024
+      recognition:
+        width-or-height: 2048
