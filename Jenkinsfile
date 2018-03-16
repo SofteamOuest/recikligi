@@ -1,51 +1,64 @@
-#!groovy
 import java.text.SimpleDateFormat
 
-podTemplate(label: 'recikligi-build-pod', nodeSelector: 'medium', containers: [
+// pod utilisé pour la compilation du projet
+podTemplate(label: 'api-book-build-pod', nodeSelector: 'medium', containers: [
+
+        // le slave jenkins
         containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:alpine'),
+        // un conteneur pour le build maven
         containerTemplate(name: 'maven', image: 'maven:3.5.0', ttyEnabled: true, command: 'cat'),
+        // un conteneur pour construire les images docker
         containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true),
+        // un conteneur pour déployer les services kubernetes
         containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl', command: 'cat', ttyEnabled: true)],
 
+        // montage nécessaire pour que le conteneur docker fonction (Docker In Docker)
         volumes: [hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')]
 ) {
 
-    node('recikligi-build-pod') {
-        def dockerTagname = "registry.wildwidewest.xyz/repository/docker-repository/pocs/recikligi-${env.BUILD_ID}"
+    node('api-book-build-pod') {
+
+        def now = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())
 
         stage('checkout sources'){
-            git url: 'https://github.com/yvzn/recikligi.git', branch: 'softeam'
+                    checkout scm;
         }
 
         container('maven') {
-            stage('build sources'){
-                sh 'mvn clean install'
-            }
+
+            sh 'mvn clean install'
         }
 
-        container('docker') {
-            stage('build docker image'){
-                sh "docker build -t ${dockerTagname} ."
+       container('docker') {
 
-                sh 'mkdir /etc/docker'
-                sh 'echo {"insecure-registries" : ["registry.wildwidewest.xyz"]} > /etc/docker/daemon.json'
+                       stage('build docker image'){
 
-                withCredentials([string(credentialsId: 'nexus_password', variable: 'NEXUS_PWD')]) {
-                     sh "docker login -u admin -p ${NEXUS_PWD} registry.wildwidewest.xyz"
-                }
-                
-                sh "docker push ${dockerTagname}"
-            }
-        }
+
+                           sh "docker build -t registry.k8.wildwidewest.xyz/repository/docker-repository/pocs/recikligi:$now ."
+
+                           sh 'mkdir /etc/docker'
+
+                           // le registry est insecure (pas de https)
+                           sh 'echo {"insecure-registries" : ["registry.k8.wildwidewest.xyz"]} > /etc/docker/daemon.json'
+
+                           withCredentials([string(credentialsId: 'nexus_password', variable: 'NEXUS_PWD')]) {
+
+                                sh "docker login -u admin -p ${NEXUS_PWD} registry.k8.wildwidewest.xyz"
+                           }
+
+                           sh "docker push registry.k8.wildwidewest.xyz/repository/docker-repository/pocs/recikligi:$now"
+
+                       }
+               }
 
         container('kubectl') {
-            stage('deploy'){
-                sh "sed -i 's,@dockerTagname@,${dockerTagname},' src/main/kubernetes/recikligi.yml"
-                sh 'kubectl delete ing recikligi || :'
-                sh 'kubectl delete svc recikligi || :'
-                sh 'kubectl delete deployment recikligi || :'
-                sh 'kubectl apply -f src/main/kubernetes/recikligi.yml'
-            }
+
+
+                build job: "recikligi-run/master",
+                                  wait: false,
+                                  parameters: [[$class: 'StringParameterValue', name: 'image', value: "$now"]]
+
+
         }
     }
 }
