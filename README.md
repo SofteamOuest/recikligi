@@ -44,3 +44,4 @@ docker build . -t recikligi ⏎
 docker run --rm -d -p 8080:8080 -t recikligi ✂
   --recikligi.watson.apikey=`api key` ✂ 
   --recikligi.storageFolder=`path to storage folder` ⏎</pre>
+  
